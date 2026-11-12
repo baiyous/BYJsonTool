@@ -1,0 +1,2158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JSON 工具箱 V12 · 开发者 白柚</title>
+  <style>
+    :root {
+      --color-page: #F5F6FA;
+      --color-card: #FFFFFF;
+      --color-text: rgba(0, 0, 0, 0.85);
+      --color-text-secondary: rgba(0, 0, 0, 0.65);
+      --color-text-muted: rgba(0, 0, 0, 0.45);
+      --color-border: rgba(0, 0, 0, 0.06);
+      --color-border-strong: rgba(0, 0, 0, 0.14);
+      --color-primary: #315EFB;
+      --color-primary-hover: #244AD3;
+      --color-primary-soft: #EEF2FF;
+      --color-success: #16845B;
+      --color-success-soft: #EAF8F2;
+      --color-danger: #D43838;
+      --color-danger-soft: #FFF1F0;
+      --color-code-bg: #F7F8FC;
+      --color-hover: rgba(49, 94, 251, 0.06);
+      --color-key: #315EFB;
+      --color-string: #16845B;
+      --color-number: #D43838;
+      --color-boolean: #7C3AED;
+      --color-null: rgba(0, 0, 0, 0.45);
+      --font-body: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+      --font-code: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+      --font-size-xs: 12px;
+      --font-size-sm: 13px;
+      --font-size-md: 14px;
+      --font-size-lg: 18px;
+      --font-size-xl: 26px;
+      --space-1: 4px;
+      --space-2: 8px;
+      --space-3: 16px;
+      --space-4: 24px;
+      --space-5: 32px;
+      --radius-sm: 4px;
+      --radius-md: 8px;
+      --radius-lg: 16px;
+      --layout-width: 94vw;
+      --layout-max-width: 2200px;
+      --workspace-height: clamp(560px, calc(100vh - 260px), 920px);
+      --panel-scroll-height: clamp(220px, 30vh, 420px);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      padding-bottom: 54px;
+      background: var(--color-page);
+      color: var(--color-text);
+      font-family: var(--font-body);
+      font-size: var(--font-size-md);
+    }
+
+    button, input, textarea { font: inherit; }
+
+    button {
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-sm);
+      background: var(--color-card);
+      color: var(--color-text-secondary);
+      cursor: pointer;
+      min-height: 34px;
+      padding: var(--space-2) var(--space-3);
+      transition: background-color 120ms ease, border-color 120ms ease, color 120ms ease;
+    }
+
+    button:hover { border-color: var(--color-primary); color: var(--color-primary); }
+    button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+    button.primary { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-card); }
+    button.primary:hover { background: var(--color-primary-hover); border-color: var(--color-primary-hover); color: var(--color-card); }
+    button.quiet { border-color: transparent; background: transparent; }
+    button.danger:hover { color: var(--color-danger); border-color: var(--color-danger); }
+    button.small { min-height: 28px; padding: var(--space-1) var(--space-2); font-size: var(--font-size-xs); }
+
+    header {
+      width: var(--layout-width);
+      max-width: var(--layout-max-width);
+      margin: 0 auto;
+      padding: var(--space-4) 0 var(--space-3);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-3);
+    }
+
+    .brand { display: flex; align-items: center; gap: var(--space-3); min-width: 0; }
+    .brand-badge {
+      width: 46px;
+      height: 46px;
+      flex: none;
+      border-radius: 12px;
+      background: var(--color-primary);
+      color: var(--color-card);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .title-row { display: flex; align-items: center; gap: var(--space-2); }
+    h1 { margin: 0; font-size: var(--font-size-xl); line-height: 1.25; }
+    .version-badge {
+      background: var(--color-primary-soft);
+      color: var(--color-primary);
+      font-size: var(--font-size-xs);
+      font-weight: 600;
+      padding: 2px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .subtitle { margin: 2px 0 0; color: var(--color-text-muted); }
+    .subtitle .sep { margin: 0 6px; color: var(--color-border-strong); }
+    .header-side { display: flex; flex-direction: column; align-items: flex-end; gap: var(--space-2); flex: none; }
+    .dev-credit {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--color-card);
+      border: 1px solid var(--color-border-strong);
+      border-radius: 999px;
+      padding: 4px 12px;
+      font-size: var(--font-size-sm);
+      color: var(--color-text-secondary);
+      white-space: nowrap;
+    }
+    .dev-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--color-success); }
+    .dev-credit .dev-name { color: var(--color-text); font-weight: 600; }
+    .shortcut { color: var(--color-text-muted); font-size: var(--font-size-xs); white-space: nowrap; }
+    kbd { background: var(--color-card); border: 1px solid var(--color-border-strong); border-radius: var(--radius-sm); padding: 2px 6px; }
+
+    .ad-marquee {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 20;
+      height: 38px;
+      overflow: hidden;
+      background: var(--color-text);
+      color: rgba(255, 255, 255, 0.88);
+      display: flex;
+      align-items: center;
+      user-select: none;
+    }
+    .ad-track {
+      display: inline-flex;
+      white-space: nowrap;
+      animation: ad-marquee-scroll 36s linear infinite;
+      will-change: transform;
+    }
+    .ad-marquee:hover .ad-track { animation-play-state: paused; }
+    .ad-group { display: inline-flex; align-items: center; white-space: nowrap; }
+    .ad-group .ad-strong { color: #FFC53D; font-weight: 700; }
+    .ad-group .ad-name { color: #8FB3FF; font-weight: 600; }
+    .ad-group .ad-sep { margin: 0 14px; color: rgba(255, 255, 255, 0.35); }
+    @keyframes ad-marquee-scroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ad-track { animation: none; }
+    }
+
+    main {
+      width: var(--layout-width);
+      max-width: var(--layout-max-width);
+      margin: 0 auto;
+      padding: 0 0 var(--space-4);
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(420px, 0.75fr);
+      gap: var(--space-4);
+      align-items: start;
+    }
+
+    .card { background: var(--color-card); border: 1px solid var(--color-border); border-radius: var(--radius-lg); overflow: hidden; }
+    .card-header { padding: var(--space-3); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); }
+    .card-title { margin: 0; font-size: var(--font-size-lg); }
+    .toolbar { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+    .editor-wrap { padding: var(--space-3); }
+
+    textarea {
+      width: 100%;
+      height: var(--workspace-height);
+      min-height: 560px;
+      resize: vertical;
+      padding: var(--space-3);
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-md);
+      background: var(--color-code-bg);
+      color: var(--color-text);
+      font-family: var(--font-code);
+      font-size: var(--font-size-sm);
+      line-height: 1.65;
+      tab-size: 2;
+    }
+
+    textarea::placeholder, input::placeholder { color: var(--color-text-muted); }
+
+    .code-editor {
+      position: relative;
+      height: var(--workspace-height);
+      min-height: 560px;
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-md);
+      background: var(--color-code-bg);
+      overflow: hidden;
+    }
+    .code-highlight {
+      position: absolute;
+      inset: 0;
+      margin: 0;
+      overflow: hidden;
+      padding: var(--space-3);
+      font-family: var(--font-code);
+      font-size: var(--font-size-sm);
+      line-height: 1.65;
+      tab-size: 2;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+      color: var(--color-text);
+      pointer-events: none;
+    }
+    .code-editor textarea {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      padding: var(--space-3);
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      color: transparent;
+      caret-color: var(--color-text);
+      resize: none;
+      overflow: auto;
+      font-family: var(--font-code);
+      font-size: var(--font-size-sm);
+      line-height: 1.65;
+      tab-size: 2;
+      white-space: pre-wrap;
+      overflow-wrap: break-word;
+    }
+    .code-editor textarea::selection { background: rgba(49, 94, 251, 0.22); }
+    .tok-key { color: var(--color-key); }
+    .tok-string { color: var(--color-string); }
+    .tok-number { color: var(--color-number); }
+    .tok-boolean { color: var(--color-boolean); }
+    .tok-null { color: var(--color-null); font-style: italic; }
+    .tok-b0 { color: #0F7FA8; font-weight: 600; }
+    .tok-b1 { color: #C47F17; font-weight: 600; }
+    .tok-b2 { color: #16845B; font-weight: 600; }
+    .tok-b3 { color: #7C3AED; font-weight: 600; }
+    .tok-b4 { color: #D43838; font-weight: 600; }
+    .tok-b5 { color: #315EFB; font-weight: 600; }
+    .code-located { background: rgba(255, 213, 79, 0.55); border-radius: 2px; }
+
+    .diff-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); height: clamp(320px, 46vh, 600px); }
+    .diff-grid .code-editor { height: 100%; min-height: 0; }
+    .diff-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-2); padding: var(--space-2) 0; }
+    .diff-summary { color: var(--color-text-muted); font-size: var(--font-size-sm); }
+    .diff-results-area { max-height: clamp(180px, 26vh, 340px); overflow: auto; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-card); }
+    #diffPanel .hint { margin: 0 0 var(--space-2); }
+
+    textarea.compact-textarea {
+      height: 180px;
+      min-height: 120px;
+      max-height: 420px;
+      padding: var(--space-2);
+      font-size: var(--font-size-xs);
+    }
+    .view-toolbar { padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--color-border); display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); background: var(--color-code-bg); }
+    .view-switch, .tree-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+    .view-switch button.active { background: var(--color-primary); border-color: var(--color-primary); color: var(--color-card); }
+    .view-panel[hidden] { display: none; }
+    .tree-view { height: var(--workspace-height); min-height: 560px; overflow: auto; padding: var(--space-3); border: 1px solid var(--color-border-strong); border-radius: var(--radius-md); background: var(--color-card); font-family: var(--font-code); font-size: var(--font-size-sm); line-height: 1.7; }
+    .tree-view .empty { padding-top: var(--space-5); }
+    .tree-node { margin-left: var(--space-3); }
+    .tree-root { margin-left: 0; }
+    .tree-node summary { min-height: 26px; padding: 1px var(--space-2); border-radius: var(--radius-sm); cursor: pointer; list-style-position: outside; white-space: nowrap; }
+    .tree-node summary:hover, .tree-leaf:hover { background: var(--color-hover); }
+    .tree-children { border-left: 1px solid var(--color-border); margin-left: 5px; padding-left: 10px; }
+    .tree-leaf { min-height: 26px; margin-left: var(--space-3); padding: 1px var(--space-2); border-radius: var(--radius-sm); white-space: nowrap; }
+    .tree-node.tree-located > summary, .tree-leaf.tree-located { background: var(--color-primary-soft); outline: 2px solid var(--color-primary); outline-offset: -2px; }
+    .tree-key { color: var(--color-key); }
+    .tree-separator, .tree-bracket, .tree-count { color: var(--color-text-muted); }
+    .tree-count { margin-left: var(--space-2); font-size: var(--font-size-xs); }
+    .tree-string { color: var(--color-string); }
+    .tree-number { color: var(--color-number); }
+    .tree-boolean { color: var(--color-boolean); }
+    .tree-null { color: var(--color-null); font-style: italic; }
+    .status { margin-top: var(--space-2); min-height: 22px; color: var(--color-text-muted); font-size: var(--font-size-sm); display: flex; justify-content: space-between; gap: var(--space-3); }
+    .status.error { color: var(--color-danger); }
+    .status.success { color: var(--color-success); }
+
+    .right-column { display: flex; flex-direction: column; gap: var(--space-3); min-width: 0; }
+    .query-card { padding: var(--space-3); }
+    .query-row { display: grid; grid-template-columns: 1fr auto; gap: var(--space-2); margin-top: var(--space-3); }
+
+    input[type="text"] {
+      min-width: 0;
+      height: 38px;
+      padding: 0 var(--space-3);
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-sm);
+      color: var(--color-text);
+      background: var(--color-card);
+      font-family: var(--font-code);
+    }
+
+    .hint { margin: var(--space-2) 0 0; color: var(--color-text-muted); font-size: var(--font-size-xs); line-height: 1.6; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-2); padding: var(--space-3); }
+    .stat { padding: var(--space-3); background: var(--color-code-bg); border-radius: var(--radius-md); }
+    .stat-value { font-family: 'DIN Alternate', 'Helvetica Neue', Arial, sans-serif; font-size: var(--font-size-xl); font-weight: 700; line-height: 1; }
+    .stat-label { margin-top: var(--space-2); color: var(--color-text-muted); font-size: var(--font-size-xs); }
+
+    .section-head { padding: var(--space-3); border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; gap: var(--space-3); }
+    .section-head h2 { margin: 0; font-size: var(--font-size-lg); }
+    .head-actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: var(--space-1); }
+    .count-badge { display: inline-flex; align-items: center; min-width: 28px; height: 24px; padding: 0 var(--space-2); border-radius: var(--radius-lg); background: var(--color-primary-soft); color: var(--color-primary); justify-content: center; font-size: var(--font-size-xs); font-weight: 700; }
+    .scroll-area { max-height: var(--panel-scroll-height); overflow: auto; }
+    .empty { padding: var(--space-5) var(--space-3); text-align: center; color: var(--color-text-muted); }
+    .panel-body { padding: var(--space-3); }
+    .panel-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+    .summary-line { padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--color-border); color: var(--color-text-muted); font-size: var(--font-size-xs); }
+
+    .result-item { padding: var(--space-3); border-bottom: 1px solid var(--color-border); }
+    .result-item:last-child { border-bottom: 0; }
+    .result-meta { display: flex; align-items: center; justify-content: space-between; gap: var(--space-2); margin-bottom: var(--space-2); }
+    .path { min-width: 0; overflow-wrap: anywhere; color: var(--color-primary); font-family: var(--font-code); font-size: var(--font-size-xs); }
+    .path-link { min-height: 0; padding: 0; border: 0; background: none; cursor: pointer; text-align: left; }
+    .path-link:hover { text-decoration: underline; }
+    .path-link:focus-visible { outline: 2px solid var(--color-primary); outline-offset: 2px; }
+    .type-tag { flex: 0 0 auto; color: var(--color-text-muted); font-size: var(--font-size-xs); }
+    pre { margin: 0; padding: var(--space-2); overflow: auto; border-radius: var(--radius-sm); background: var(--color-code-bg); color: var(--color-text-secondary); font-family: var(--font-code); font-size: var(--font-size-xs); line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+    .result-actions { display: flex; justify-content: flex-end; margin-top: var(--space-2); }
+    .search-result { width: 100%; min-height: 0; padding: var(--space-3); border: 0; border-bottom: 1px solid var(--color-border); border-radius: 0; text-align: left; }
+    .search-result:hover { background: var(--color-hover); }
+    .search-snippet { margin-top: var(--space-1); color: var(--color-text-secondary); font-family: var(--font-code); font-size: var(--font-size-xs); overflow-wrap: anywhere; }
+    .diff-values { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-2); }
+    .diff-value-label { margin-bottom: var(--space-1); color: var(--color-text-muted); font-size: var(--font-size-xs); }
+    .diff-added .type-tag { color: var(--color-success); }
+    .diff-deleted .type-tag, .diff-modified .type-tag { color: var(--color-danger); }
+
+    table { width: 100%; border-collapse: collapse; font-size: var(--font-size-sm); }
+    th, td { padding: 10px var(--space-3); border-bottom: 1px solid var(--color-border); text-align: left; vertical-align: top; }
+    th { position: sticky; top: 0; z-index: 1; background: var(--color-code-bg); color: var(--color-text-muted); font-weight: 500; }
+    td:first-child { font-family: var(--font-code); font-size: var(--font-size-xs); overflow-wrap: anywhere; }
+    td:last-child, th:last-child { width: 74px; text-align: right; white-space: nowrap; }
+
+    .drop-active textarea, .drop-active .tree-view { border-color: var(--color-primary); background: var(--color-primary-soft); }
+    .context-menu { position: fixed; z-index: 20; min-width: 150px; padding: var(--space-1); border: 1px solid var(--color-border-strong); border-radius: var(--radius-md); background: var(--color-card); }
+    .context-menu[hidden] { display: none; }
+    .context-menu button { width: 100%; min-height: 32px; padding: var(--space-2) var(--space-3); border: 0; text-align: left; background: transparent; color: var(--color-text); }
+    .context-menu button:hover { background: var(--color-hover); color: var(--color-primary); }
+    .context-menu button:disabled { cursor: not-allowed; background: transparent; color: var(--color-text-muted); }
+    .toast { position: fixed; right: var(--space-4); bottom: calc(var(--space-4) + 46px); z-index: 30; padding: 10px var(--space-3); border-radius: var(--radius-md); background: var(--color-text); color: var(--color-card); font-size: var(--font-size-sm); opacity: 0; pointer-events: none; transform: translateY(8px); transition: opacity 160ms ease, transform 160ms ease; }
+    .toast.show { opacity: 1; transform: translateY(0); }
+    #fileInput { display: none; }
+
+    @media (max-width: 1120px) {
+      main { grid-template-columns: 1fr; }
+      .code-editor, .tree-view { height: clamp(430px, 60vh, 680px); min-height: 430px; }
+      .diff-grid { grid-template-columns: 1fr; height: auto; }
+      .diff-grid .code-editor { height: clamp(240px, 38vh, 480px); }
+      .right-column { display: grid; grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 640px) {
+      header { width: calc(100% - var(--space-5)); align-items: flex-start; padding: var(--space-3) 0; }
+      .brand { gap: var(--space-2); }
+      .brand-badge { width: 38px; height: 38px; font-size: 18px; border-radius: 10px; }
+      .header-side { align-items: flex-start; }
+      .shortcut { display: none; }
+      .ad-marquee { height: 32px; }
+      main { width: calc(100% - var(--space-5)); padding: 0 0 var(--space-3); }
+      .card-header { align-items: flex-start; flex-direction: column; }
+      .toolbar { width: 100%; }
+      .toolbar button { flex: 1 1 auto; }
+      .view-toolbar { align-items: flex-start; flex-direction: column; }
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .query-row, .diff-values { grid-template-columns: 1fr; }
+      .section-head { align-items: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <div class="brand-badge" aria-hidden="true">柚</div>
+      <div class="brand-text">
+        <div class="title-row">
+          <h1>JSON 工具箱</h1>
+          <span class="version-badge">V12</span>
+        </div>
+        <p class="subtitle">格式化<span class="sep">·</span>树视图<span class="sep">·</span>JSON 对比<span class="sep">·</span>全文搜索定位<span class="sep">·</span>路径补全<span class="sep">·</span>CSV 导出<span class="sep">·</span>扁平化<span class="sep">·</span>语法高亮</p>
+      </div>
+    </div>
+    <div class="header-side">
+      <span class="dev-credit"><span class="dev-dot" aria-hidden="true"></span>开发者<span class="dev-name">白柚</span></span>
+      <span class="shortcut"><kbd>⌘ / Ctrl</kbd> + <kbd>Enter</kbd> 格式化</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="card" id="editorCard" aria-labelledby="editorTitle">
+      <div class="card-header">
+        <h2 class="card-title" id="editorTitle">JSON 输入</h2>
+        <div class="toolbar">
+          <button class="primary" id="formatBtn" type="button">格式化</button>
+          <button id="minifyBtn" type="button">压缩</button>
+          <button id="flattenBtn" type="button">扁平化</button>
+          <button id="unflattenBtn" type="button">反扁平化</button>
+          <button id="copyJsonBtn" type="button">复制</button>
+          <button id="downloadBtn" type="button">下载</button>
+          <button id="uploadBtn" type="button">导入文件</button>
+          <button class="quiet" id="exampleBtn" type="button">示例</button>
+          <button class="quiet danger" id="clearBtn" type="button">清空</button>
+        </div>
+      </div>
+      <div class="view-toolbar">
+        <div class="view-switch" aria-label="JSON 视图切换">
+          <button class="small active" id="codeViewBtn" type="button">代码视图</button>
+          <button class="small" id="treeViewBtn" type="button">树视图</button>
+          <button class="small" id="diffViewBtn" type="button">JSON Diff</button>
+        </div>
+        <div class="tree-actions" id="treeActions" hidden>
+          <button class="small" id="expandAllBtn" type="button">全部展开</button>
+          <button class="small" id="collapseAllBtn" type="button">全部折叠</button>
+        </div>
+      </div>
+      <div class="editor-wrap">
+        <div class="view-panel" id="codePanel">
+          <div class="code-editor">
+            <pre class="code-highlight" id="codeHighlight" aria-hidden="true"></pre>
+            <textarea id="jsonInput" spellcheck="false" aria-label="JSON 输入区" placeholder="在这里粘贴 JSON，或拖入 .json 文件…"></textarea>
+          </div>
+        </div>
+        <div class="view-panel" id="treePanel" hidden>
+          <div class="tree-view" id="jsonTree" aria-label="JSON 树视图">
+            <div class="empty">解析 JSON 后可切换到树视图</div>
+          </div>
+        </div>
+        <div class="view-panel" id="diffPanel" hidden>
+          <div class="diff-grid">
+            <div class="code-editor diff-pane">
+              <pre class="code-highlight" id="diffLeftHighlight" aria-hidden="true"></pre>
+              <textarea id="diffLeftInput" spellcheck="false" aria-label="对比 JSON（左侧，可编辑）" placeholder="左侧对比 JSON（可编辑），首次进入自动填入当前 JSON"></textarea>
+            </div>
+            <div class="code-editor diff-pane">
+              <pre class="code-highlight" id="diffRightHighlight" aria-hidden="true"></pre>
+              <textarea id="diffInput" spellcheck="false" aria-label="对比 JSON 输入区" placeholder="在这里粘贴右侧对比 JSON…"></textarea>
+            </div>
+          </div>
+          <div class="diff-toolbar">
+            <button class="primary" id="diffBtn" type="button">开始对比</button>
+            <button id="swapDiffBtn" type="button">交换左右</button>
+            <span class="diff-summary" id="diffSummary">尚未开始对比</span>
+            <span class="count-badge" id="diffCount">0</span>
+          </div>
+          <p class="hint">左右两侧均可编辑，左侧首次进入时自动填入当前 JSON；对象按键、数组按索引递归比较。点击差异路径会在两侧同时定位。</p>
+          <div class="diff-results-area" id="diffResults">
+            <div class="empty">对比结果会区分新增、删除和修改</div>
+          </div>
+        </div>
+        <input id="fileInput" type="file" accept="application/json,.json,.txt">
+        <div class="status" id="parseStatus" role="status">
+          <span>等待输入 JSON</span>
+          <span id="sizeInfo">0 B</span>
+        </div>
+      </div>
+    </section>
+
+    <aside class="right-column">
+      <section class="card query-card" aria-labelledby="queryTitle">
+        <h2 class="card-title" id="queryTitle">路径查询</h2>
+        <div class="query-row">
+          <input id="pathInput" type="text" list="pathSuggestions" autocomplete="off" aria-label="JSON 查询路径" placeholder="例如：order.items.sku">
+          <datalist id="pathSuggestions"></datalist>
+          <button class="primary" id="queryBtn" type="button">查询</button>
+        </div>
+        <p class="hint">解析后自动补全（数组归一为 <code>*</code>）；支持 <code>a.b.c</code>、<code>items.*.name</code>、<code>items[0].name</code>。按 Enter 查询，点击结果路径可跳转。</p>
+      </section>
+
+      <section class="card" aria-labelledby="searchTitle">
+        <div class="section-head">
+          <h2 id="searchTitle">键值全文搜索</h2>
+          <span class="count-badge" id="searchCount">0</span>
+        </div>
+        <div class="panel-body">
+          <div class="query-row">
+            <input id="searchInput" type="text" aria-label="键名和叶子值搜索" placeholder="搜索键名或叶子值">
+            <button class="primary" id="searchBtn" type="button">搜索</button>
+          </div>
+          <p class="hint">默认同时搜索键名和叶子值，不区分大小写；点击结果跳转对应位置（树视图定位节点，代码视图选中文本）。</p>
+        </div>
+        <div class="scroll-area" id="searchResults">
+          <div class="empty">输入关键词后搜索当前 JSON</div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="overviewTitle">
+        <div class="section-head">
+          <h2 id="overviewTitle">数据概览</h2>
+        </div>
+        <div class="stats-grid">
+          <article class="stat"><div class="stat-value" id="arrayCount">0</div><div class="stat-label">数组数量</div></article>
+          <article class="stat"><div class="stat-value" id="arrayItems">0</div><div class="stat-label">数组元素总数</div></article>
+          <article class="stat"><div class="stat-value" id="objectCount">0</div><div class="stat-label">对象数量</div></article>
+          <article class="stat"><div class="stat-value" id="maxDepth">0</div><div class="stat-label">最大深度</div></article>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="resultsTitle">
+        <div class="section-head">
+          <h2 id="resultsTitle">查询结果</h2>
+          <div class="head-actions">
+            <button class="small" id="exportResultsCsvBtn" type="button">导出 CSV</button>
+            <button class="small" id="copyUniqueResultsBtn" type="button">去重复制</button>
+            <button class="small quiet" id="copyResultsBtn" type="button">复制全部值</button>
+            <span class="count-badge" id="matchCount">0</span>
+          </div>
+        </div>
+        <div class="scroll-area" id="resultsList">
+          <div class="empty">输入路径后查询，匹配结果会显示在这里</div>
+        </div>
+      </section>
+
+      <section class="card" aria-labelledby="arraysTitle">
+        <div class="section-head">
+          <h2 id="arraysTitle">数组明细</h2>
+          <span class="count-badge" id="arrayBadge">0</span>
+        </div>
+        <div class="scroll-area" id="arraysList">
+          <div class="empty">解析 JSON 后显示每个数组的路径和长度</div>
+        </div>
+      </section>
+    </aside>
+  </main>
+
+  <div class="ad-marquee" role="note" aria-label="广告位招租公告">
+    <div class="ad-track">
+      <span class="ad-group">
+        <span class="ad-strong">广告位招租</span><span class="ad-sep">·</span>虚位以待<span class="ad-sep">·</span>本工具由 <span class="ad-name">白柚</span> 开发维护<span class="ad-sep">·</span>JSON 工具箱 V12<span class="ad-sep">·</span>支持格式化 / 树视图 / 对比 / 全文搜索 / 路径补全 / CSV 导出 / 扁平化 / 语法高亮<span class="ad-sep">·</span>
+        <span class="ad-strong">广告位招租</span><span class="ad-sep">·</span>虚位以待<span class="ad-sep">·</span>本工具由 <span class="ad-name">白柚</span> 开发维护<span class="ad-sep">·</span>JSON 工具箱 V12<span class="ad-sep">·</span>支持格式化 / 树视图 / 对比 / 全文搜索 / 路径补全 / CSV 导出 / 扁平化 / 语法高亮<span class="ad-sep">·</span>
+        <span class="ad-strong">广告位招租</span><span class="ad-sep">·</span>虚位以待<span class="ad-sep">·</span>本工具由 <span class="ad-name">白柚</span> 开发维护<span class="ad-sep">·</span>JSON 工具箱 V12<span class="ad-sep">·</span>支持格式化 / 树视图 / 对比 / 全文搜索 / 路径补全 / CSV 导出 / 扁平化 / 语法高亮<span class="ad-sep">·</span>
+      </span>
+      <span class="ad-group" aria-hidden="true">
+        <span class="ad-strong">广告位招租</span><span class="ad-sep">·</span>虚位以待<span class="ad-sep">·</span>本工具由 <span class="ad-name">白柚</span> 开发维护<span class="ad-sep">·</span>JSON 工具箱 V12<span class="ad-sep">·</span>支持格式化 / 树视图 / 对比 / 全文搜索 / 路径补全 / CSV 导出 / 扁平化 / 语法高亮<span class="ad-sep">·</span>
+        <span class="ad-strong">广告位招租</span><span class="ad-sep">·</span>虚位以待<span class="ad-sep">·</span>本工具由 <span class="ad-name">白柚</span> 开发维护<span class="ad-sep">·</span>JSON 工具箱 V12<span class="ad-sep">·</span>支持格式化 / 树视图 / 对比 / 全文搜索 / 路径补全 / CSV 导出 / 扁平化 / 语法高亮<span class="ad-sep">·</span>
+        <span class="ad-strong">广告位招租</span><span class="ad-sep">·</span>虚位以待<span class="ad-sep">·</span>本工具由 <span class="ad-name">白柚</span> 开发维护<span class="ad-sep">·</span>JSON 工具箱 V12<span class="ad-sep">·</span>支持格式化 / 树视图 / 对比 / 全文搜索 / 路径补全 / CSV 导出 / 扁平化 / 语法高亮<span class="ad-sep">·</span>
+      </span>
+    </div>
+  </div>
+
+  <div class="context-menu" id="treeContextMenu" role="menu" hidden>
+    <button id="expandCurrentNodeBtn" type="button" role="menuitem">全部展开当前节点</button>
+    <button id="collapseCurrentNodeBtn" type="button" role="menuitem">折叠当前节点及其子树</button>
+    <button id="copyTreePathBtn" type="button" role="menuitem">复制路径</button>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    (() => {
+      const elements = {
+        input: document.getElementById('jsonInput'),
+        codeHighlight: document.getElementById('codeHighlight'),
+        diffPanel: document.getElementById('diffPanel'),
+        diffViewBtn: document.getElementById('diffViewBtn'),
+        diffLeftInput: document.getElementById('diffLeftInput'),
+        diffLeftHighlight: document.getElementById('diffLeftHighlight'),
+        diffRightHighlight: document.getElementById('diffRightHighlight'),
+        path: document.getElementById('pathInput'),
+        status: document.getElementById('parseStatus'),
+        size: document.getElementById('sizeInfo'),
+        results: document.getElementById('resultsList'),
+        arrays: document.getElementById('arraysList'),
+        matchCount: document.getElementById('matchCount'),
+        arrayBadge: document.getElementById('arrayBadge'),
+        arrayCount: document.getElementById('arrayCount'),
+        arrayItems: document.getElementById('arrayItems'),
+        objectCount: document.getElementById('objectCount'),
+        maxDepth: document.getElementById('maxDepth'),
+        fileInput: document.getElementById('fileInput'),
+        editorCard: document.getElementById('editorCard'),
+        codePanel: document.getElementById('codePanel'),
+        treePanel: document.getElementById('treePanel'),
+        jsonTree: document.getElementById('jsonTree'),
+        codeViewBtn: document.getElementById('codeViewBtn'),
+        treeViewBtn: document.getElementById('treeViewBtn'),
+        treeActions: document.getElementById('treeActions'),
+        treeContextMenu: document.getElementById('treeContextMenu'),
+        expandCurrentNodeBtn: document.getElementById('expandCurrentNodeBtn'),
+        collapseCurrentNodeBtn: document.getElementById('collapseCurrentNodeBtn'),
+        copyTreePathBtn: document.getElementById('copyTreePathBtn'),
+        pathSuggestions: document.getElementById('pathSuggestions'),
+        searchInput: document.getElementById('searchInput'),
+        searchResults: document.getElementById('searchResults'),
+        searchCount: document.getElementById('searchCount'),
+        diffInput: document.getElementById('diffInput'),
+        diffResults: document.getElementById('diffResults'),
+        diffCount: document.getElementById('diffCount'),
+        diffSummary: document.getElementById('diffSummary'),
+        toast: document.getElementById('toast')
+      };
+
+      const exampleData = {
+        order: {
+          id: 'SO-2026-001',
+          customer: { name: '示例客户', level: 'VIP' },
+          items: [
+            { sku: 'SKU-1001', name: '商品 A', qty: 2, tags: ['新品', '常温'] },
+            { sku: 'SKU-1002', name: '商品 B', qty: 1, tags: ['易碎'] }
+          ]
+        },
+        history: [
+          { action: 'created', operator: { name: 'Alice' } },
+          { action: 'confirmed', operator: { name: 'Bob' } }
+        ],
+        backup: { order: { items: [{ sku: 'SKU-OLD-01' }] } }
+      };
+
+      let parsedData;
+      let currentMatches = [];
+      let currentSearchResults = [];
+      let toastTimer;
+      let suggestionTimer;
+      let selectedTreePath = '';
+      let selectedTreeNode = null;
+      let highlightedTreeNode = null;
+      let renderedTreeSource = null;
+      let activeView = 'code';
+      let diffLeftSyncSource = null;
+      const treeNodeIndex = new Map();
+      const ROOT_ARRAY_AUTO_EXPAND_LIMIT = 1000;
+      const EXPAND_ALL_NODE_LIMIT = 10000;
+      const PATH_SUGGESTION_LIMIT = 2000;
+      const SEARCH_RESULT_LIMIT = 500;
+      const DIFF_RENDER_LIMIT = 1000;
+      const MAX_ARRAY_INDEX = 100000;
+      const DANGEROUS_KEYS = new Set(['__proto__', 'prototype', 'constructor']);
+
+      const formatBytes = bytes => {
+        if (bytes < 1024) return `${bytes} B`;
+        if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+        return `${(bytes / 1024 / 1024).toFixed(1)} MB`;
+      };
+
+      const getType = value => {
+        if (value === null) return 'null';
+        if (Array.isArray(value)) return 'array';
+        return typeof value;
+      };
+
+      const valueText = value => {
+        if (typeof value === 'string') return value;
+        if (value === undefined) return 'undefined';
+        return JSON.stringify(value, null, 2);
+      };
+
+      function stableJsonSignature(value) {
+        if (Array.isArray(value)) {
+          return `array:[${value.map(stableJsonSignature).join(',')}]`;
+        }
+        if (value !== null && typeof value === 'object') {
+          const entries = Object.keys(value).sort().map(key => `${JSON.stringify(key)}:${stableJsonSignature(value[key])}`);
+          return `object:{${entries.join(',')}}`;
+        }
+        return `${getType(value)}:${JSON.stringify(value)}`;
+      }
+
+      function uniqueJsonValues(values) {
+        const seen = new Set();
+        return values.filter(value => {
+          const signature = stableJsonSignature(value);
+          if (seen.has(signature)) return false;
+          seen.add(signature);
+          return true;
+        });
+      }
+
+      const pathKey = key => /^[A-Za-z_$][\w$]*$/.test(String(key)) ? `.${key}` : `[${JSON.stringify(String(key))}]`;
+      const childPath = (base, key, isArray) => isArray ? `${base}[${key}]` : `${base}${pathKey(key)}`;
+
+      function summarizeValue(value, maxLength = 180) {
+        const text = valueText(value);
+        return text.length > maxLength ? `${text.slice(0, maxLength)}…` : text;
+      }
+
+      function collectPathSuggestions(root) {
+        const suggestions = new Set();
+        let visited = 0;
+        const appendKey = (base, key) => {
+          const suffix = /^[A-Za-z_$][\w$]*$/.test(key) ? `${base ? '.' : ''}${key}` : `[${JSON.stringify(key)}]`;
+          return `${base}${suffix}`;
+        };
+        function visit(value, path) {
+          visited += 1;
+          if (suggestions.size >= PATH_SUGGESTION_LIMIT || visited > PATH_SUGGESTION_LIMIT * 10) return;
+          if (path) suggestions.add(path);
+          if (Array.isArray(value)) {
+            if (value.length && suggestions.size < PATH_SUGGESTION_LIMIT) {
+              const wildcardPath = path ? `${path}.*` : '*';
+              suggestions.add(wildcardPath);
+              for (const child of value) {
+                visit(child, wildcardPath);
+                if (suggestions.size >= PATH_SUGGESTION_LIMIT || visited > PATH_SUGGESTION_LIMIT * 10) break;
+              }
+            }
+          } else if (value !== null && typeof value === 'object') {
+            for (const [key, child] of Object.entries(value)) {
+              visit(child, appendKey(path, key));
+              if (suggestions.size >= PATH_SUGGESTION_LIMIT || visited > PATH_SUGGESTION_LIMIT * 10) break;
+            }
+          }
+        }
+        visit(root, '');
+        return [...suggestions].slice(0, PATH_SUGGESTION_LIMIT);
+      }
+
+      function updatePathSuggestions(root) {
+        elements.pathSuggestions.replaceChildren();
+        if (root === undefined) return;
+        const fragment = document.createDocumentFragment();
+        collectPathSuggestions(root).forEach(path => {
+          const option = document.createElement('option');
+          option.value = path;
+          fragment.appendChild(option);
+        });
+        elements.pathSuggestions.appendChild(fragment);
+      }
+
+      function showToast(message) {
+        elements.toast.textContent = message;
+        elements.toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => elements.toast.classList.remove('show'), 1800);
+      }
+
+      function hideTreeContextMenu() {
+        elements.treeContextMenu.hidden = true;
+      }
+
+      function showTreeContextMenu(x, y, path, node) {
+        selectedTreePath = path;
+        selectedTreeNode = node.matches('details.tree-node') ? node : null;
+        const isContainerNode = Boolean(selectedTreeNode);
+        elements.expandCurrentNodeBtn.disabled = !isContainerNode;
+        elements.collapseCurrentNodeBtn.disabled = !isContainerNode;
+        elements.treeContextMenu.hidden = false;
+        const rect = elements.treeContextMenu.getBoundingClientRect();
+        const left = Math.min(x, window.innerWidth - rect.width - 8);
+        const top = Math.min(y, window.innerHeight - rect.height - 8);
+        elements.treeContextMenu.style.left = `${Math.max(8, left)}px`;
+        elements.treeContextMenu.style.top = `${Math.max(8, top)}px`;
+        (isContainerNode ? elements.expandCurrentNodeBtn : elements.copyTreePathBtn).focus();
+      }
+
+      function setStatus(message, type = '') {
+        elements.status.className = `status${type ? ` ${type}` : ''}`;
+        elements.status.firstElementChild.textContent = message;
+      }
+
+      function parseJson(showError = true) {
+        scheduleCodeHighlight();
+        const rawText = elements.input.value;
+        const jsonText = rawText.charCodeAt(0) === 0xFEFF ? rawText.slice(1) : rawText;
+        const text = jsonText.trim();
+        elements.size.textContent = formatBytes(new Blob([rawText]).size);
+        if (!text) {
+          parsedData = undefined;
+          resetPanels();
+          setStatus('等待输入 JSON');
+          return null;
+        }
+        try {
+          parsedData = JSON.parse(jsonText);
+          const stats = analyzeJson(parsedData);
+          renderStats(stats);
+          renderArrays(stats.arrays);
+          updatePathSuggestions(parsedData);
+          if (rawText !== renderedTreeSource) {
+            renderTree(parsedData);
+            renderedTreeSource = rawText;
+          }
+          setStatus(`JSON 有效 · 根节点类型：${getType(parsedData)}`, 'success');
+          return parsedData;
+        } catch (error) {
+          parsedData = undefined;
+          resetPanels();
+          const detail = locateJsonError(jsonText, error.message);
+          setStatus(`解析失败：${detail}`, 'error');
+          if (showError) showToast('JSON 格式有误，请检查错误位置');
+          return null;
+        }
+      }
+
+      function locateJsonError(text, message) {
+        const match = message.match(/position\s+(\d+)/i);
+        if (!match) return message;
+        const position = Number(match[1]);
+        const before = text.slice(0, position);
+        const lines = before.split('\n');
+        return `${message}（第 ${lines.length} 行，第 ${lines[lines.length - 1].length + 1} 列）`;
+      }
+
+      function analyzeJson(root) {
+        const stats = { arrays: [], arrayItems: 0, objects: 0, maxDepth: 0 };
+        function visit(value, path, depth) {
+          stats.maxDepth = Math.max(stats.maxDepth, depth);
+          if (Array.isArray(value)) {
+            stats.arrays.push({ path, length: value.length });
+            stats.arrayItems += value.length;
+            value.forEach((item, index) => visit(item, `${path}[${index}]`, depth + 1));
+          } else if (value !== null && typeof value === 'object') {
+            stats.objects += 1;
+            Object.entries(value).forEach(([key, child]) => visit(child, childPath(path, key, false), depth + 1));
+          }
+        }
+        visit(root, '$', 0);
+        return stats;
+      }
+
+      function renderStats(stats) {
+        elements.arrayCount.textContent = stats.arrays.length;
+        elements.arrayItems.textContent = stats.arrayItems;
+        elements.objectCount.textContent = stats.objects;
+        elements.maxDepth.textContent = stats.maxDepth;
+        elements.arrayBadge.textContent = stats.arrays.length;
+      }
+
+      function renderArrays(arrays) {
+        elements.arrays.replaceChildren();
+        if (!arrays.length) {
+          elements.arrays.append(createEmpty('当前 JSON 中没有数组'));
+          return;
+        }
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const headerRow = document.createElement('tr');
+        ['数组路径', '元素数量'].forEach(text => {
+          const th = document.createElement('th');
+          th.textContent = text;
+          headerRow.appendChild(th);
+        });
+        thead.appendChild(headerRow);
+        const tbody = document.createElement('tbody');
+        arrays.forEach(item => {
+          const row = document.createElement('tr');
+          const pathCell = document.createElement('td');
+          const lengthCell = document.createElement('td');
+          pathCell.textContent = item.path;
+          lengthCell.textContent = item.length;
+          row.append(pathCell, lengthCell);
+          tbody.appendChild(row);
+        });
+        table.append(thead, tbody);
+        elements.arrays.appendChild(table);
+      }
+
+      function appendTreeLabel(target, key, value, isRoot) {
+        if (isRoot) {
+          const rootLabel = document.createElement('span');
+          rootLabel.className = 'tree-key';
+          rootLabel.textContent = '$';
+          target.appendChild(rootLabel);
+        } else {
+          const keyLabel = document.createElement('span');
+          keyLabel.className = 'tree-key';
+          keyLabel.textContent = String(key);
+          const separator = document.createElement('span');
+          separator.className = 'tree-separator';
+          separator.textContent = ' : ';
+          target.append(keyLabel, separator);
+        }
+
+        if (value !== null && typeof value === 'object') {
+          const bracket = document.createElement('span');
+          const count = document.createElement('span');
+          const length = Array.isArray(value) ? value.length : Object.keys(value).length;
+          bracket.className = 'tree-bracket';
+          bracket.textContent = Array.isArray(value) ? `[${length}]` : `{${length}}`;
+          count.className = 'tree-count';
+          count.textContent = Array.isArray(value) ? `${length} 个元素` : `${length} 个成员`;
+          target.append(bracket, count);
+          return;
+        }
+
+        const primitive = document.createElement('span');
+        primitive.className = `tree-${getType(value)}`;
+        primitive.textContent = typeof value === 'string' ? JSON.stringify(value) : String(value);
+        target.appendChild(primitive);
+      }
+
+      function createTreeNode(value, key, path, isRoot = false) {
+        const isContainer = value !== null && typeof value === 'object';
+        if (!isContainer) {
+          const leaf = document.createElement('div');
+          leaf.className = 'tree-leaf';
+          leaf.title = path;
+          leaf.dataset.jsonPath = path;
+          treeNodeIndex.set(path, leaf);
+          appendTreeLabel(leaf, key, value, isRoot);
+          return leaf;
+        }
+
+        const details = document.createElement('details');
+        details.className = `tree-node${isRoot ? ' tree-root' : ''}`;
+        details.title = path;
+        details.dataset.jsonPath = path;
+        details._jsonValue = value;
+        treeNodeIndex.set(path, details);
+        const summary = document.createElement('summary');
+        appendTreeLabel(summary, key, value, isRoot);
+        const children = document.createElement('div');
+        children.className = 'tree-children';
+        details.append(summary, children);
+
+        let populated = false;
+        details._populate = () => {
+          if (populated) return;
+          populated = true;
+          const entries = Array.isArray(value) ? value.map((child, index) => [index, child]) : Object.entries(value);
+          entries.forEach(([childKey, childValue]) => {
+            const nextPath = Array.isArray(value) ? `${path}[${childKey}]` : childPath(path, childKey, false);
+            children.appendChild(createTreeNode(childValue, childKey, nextPath));
+          });
+        };
+        details.addEventListener('toggle', () => {
+          if (details.open) details._populate();
+        });
+        if (isRoot) {
+          const shouldAutoExpand = !Array.isArray(value) || value.length <= ROOT_ARRAY_AUTO_EXPAND_LIMIT;
+          details.open = shouldAutoExpand;
+          if (shouldAutoExpand) details._populate();
+          else summary.title = `根数组包含 ${value.length} 个元素，点击后按需加载`;
+        }
+        return details;
+      }
+
+      function renderTree(root) {
+        if (highlightedTreeNode) highlightedTreeNode.classList.remove('tree-located');
+        highlightedTreeNode = null;
+        treeNodeIndex.clear();
+        elements.jsonTree.replaceChildren(createTreeNode(root, '$', '$', true));
+      }
+
+      function countJsonNodes(value, limit, state = { count: 0 }) {
+        state.count += 1;
+        if (state.count > limit || value === null || typeof value !== 'object') return state.count;
+        const values = Array.isArray(value) ? value : Object.values(value);
+        for (const child of values) {
+          countJsonNodes(child, limit, state);
+          if (state.count > limit) break;
+        }
+        return state.count;
+      }
+
+      function expandTreeNode(details) {
+        details.open = true;
+        if (details._populate) details._populate();
+        const children = details.querySelector(':scope > .tree-children');
+        if (!children) return;
+        Array.from(children.children).forEach(child => {
+          if (child.matches('details.tree-node')) expandTreeNode(child);
+        });
+      }
+
+      function expandCurrentTreeNode() {
+        const node = selectedTreeNode;
+        const path = selectedTreePath;
+        hideTreeContextMenu();
+        if (!node) return;
+        if (countJsonNodes(node._jsonValue, EXPAND_ALL_NODE_LIMIT) > EXPAND_ALL_NODE_LIMIT) {
+          showToast(`当前节点超过 ${EXPAND_ALL_NODE_LIMIT} 个子节点，请分层展开`);
+          return;
+        }
+        expandTreeNode(node);
+        showToast(`已展开当前节点：${path}`);
+      }
+
+      function collapseCurrentTreeNode() {
+        const node = selectedTreeNode;
+        const path = selectedTreePath;
+        hideTreeContextMenu();
+        if (!node) return;
+        node.querySelectorAll('details.tree-node').forEach(descendant => {
+          descendant.open = false;
+        });
+        node.open = false;
+        showToast(`已折叠当前节点及其子树：${path}`);
+      }
+
+      function setTreeExpanded(expanded) {
+        if (expanded) {
+          if (countJsonNodes(parsedData, EXPAND_ALL_NODE_LIMIT) > EXPAND_ALL_NODE_LIMIT) {
+            showToast(`节点超过 ${EXPAND_ALL_NODE_LIMIT} 个，请按需展开以避免卡顿`);
+            return;
+          }
+          Array.from(elements.jsonTree.children).forEach(node => {
+            if (node.matches('details.tree-node')) expandTreeNode(node);
+          });
+          showToast('树节点已全部展开');
+          return;
+        }
+        elements.jsonTree.querySelectorAll('details.tree-node').forEach(node => { node.open = false; });
+        showToast('树节点已全部折叠');
+      }
+
+      function switchView(view) {
+        hideTreeContextMenu();
+        if (view === 'tree') {
+          const data = parseJson(false);
+          if (data === null && parsedData === undefined) {
+            showToast('请先输入有效 JSON');
+            return;
+          }
+        }
+        if (view === 'diff') syncDiffLeft();
+        activeView = view;
+        elements.codePanel.hidden = view !== 'code';
+        elements.treePanel.hidden = view !== 'tree';
+        elements.diffPanel.hidden = view !== 'diff';
+        elements.treeActions.hidden = view !== 'tree';
+        elements.codeViewBtn.classList.toggle('active', view === 'code');
+        elements.treeViewBtn.classList.toggle('active', view === 'tree');
+        elements.diffViewBtn.classList.toggle('active', view === 'diff');
+      }
+
+      function syncDiffLeft() {
+        const leftText = elements.diffLeftInput.value;
+        const mainText = elements.input.value;
+        if (leftText === mainText) {
+          diffLeftSyncSource = mainText;
+          return;
+        }
+        if (leftText.trim() && leftText !== diffLeftSyncSource) return;
+        elements.diffLeftInput.value = mainText;
+        diffLeftSyncSource = mainText;
+        diffLeftPane.refresh();
+      }
+
+      function parsePath(input) {
+        const text = input.trim();
+        if (!text || text === '$') return [];
+        const segments = [];
+        let cursor = text.startsWith('$') ? 1 : 0;
+        while (cursor < text.length) {
+          if (text[cursor] === '.') {
+            cursor += 1;
+            continue;
+          }
+          const remainder = text.slice(cursor);
+          const bracketMatch = remainder.match(/^\[(\d+|\*)\]/);
+          if (bracketMatch) {
+            segments.push(bracketMatch[1]);
+            cursor += bracketMatch[0].length;
+            continue;
+          }
+          const quotedMatch = remainder.match(/^\[("(?:\\.|[^"\\])*")\]/);
+          if (quotedMatch) {
+            try {
+              segments.push(JSON.parse(quotedMatch[1]));
+            } catch (_) {
+              return [];
+            }
+            cursor += quotedMatch[0].length;
+            continue;
+          }
+          const plainMatch = remainder.match(/^[^.\[]+/);
+          if (!plainMatch) return [];
+          const segment = plainMatch[0].trim();
+          if (!segment) return [];
+          segments.push(segment);
+          cursor += plainMatch[0].length;
+        }
+        return segments;
+      }
+
+      function applySegment(value, basePath, segment) {
+        const found = [];
+        if (Array.isArray(value)) {
+          if (segment === '*') {
+            value.forEach((item, index) => found.push({ value: item, path: `${basePath}[${index}]` }));
+          } else if (/^\d+$/.test(segment)) {
+            const index = Number(segment);
+            if (index < value.length) found.push({ value: value[index], path: `${basePath}[${index}]` });
+          } else {
+            value.forEach((item, index) => {
+              const itemPath = `${basePath}[${index}]`;
+              found.push(...applySegment(item, itemPath, segment));
+            });
+          }
+        } else if (value !== null && typeof value === 'object') {
+          if (segment === '*') {
+            Object.entries(value).forEach(([key, child]) => found.push({ value: child, path: childPath(basePath, key, false) }));
+          } else if (Object.prototype.hasOwnProperty.call(value, segment)) {
+            found.push({ value: value[segment], path: childPath(basePath, segment, false) });
+          }
+        }
+        return found;
+      }
+
+      function resolveFrom(startValue, startPath, segments) {
+        let candidates = [{ value: startValue, path: startPath }];
+        for (const segment of segments) {
+          candidates = candidates.flatMap(candidate => applySegment(candidate.value, candidate.path, segment));
+          if (!candidates.length) break;
+        }
+        return candidates;
+      }
+
+      function findAllMatches(root, segments) {
+        const matches = new Map();
+        function scan(value, path) {
+          resolveFrom(value, path, segments).forEach(match => matches.set(match.path, match));
+          if (Array.isArray(value)) {
+            value.forEach((item, index) => scan(item, `${path}[${index}]`));
+          } else if (value !== null && typeof value === 'object') {
+            Object.entries(value).forEach(([key, child]) => scan(child, childPath(path, key, false)));
+          }
+        }
+        scan(root, '$');
+        return [...matches.values()];
+      }
+
+      function searchJson(root, query) {
+        const needle = query.toLocaleLowerCase();
+        const results = [];
+        let truncated = false;
+        function addResult(result) {
+          if (results.length < SEARCH_RESULT_LIMIT) results.push(result);
+          else truncated = true;
+        }
+        function visit(value, path, ancestors) {
+          if (truncated) return;
+          if (Array.isArray(value)) {
+            value.forEach((child, index) => {
+              if (truncated) return;
+              const nextPath = `${path}[${index}]`;
+              visit(child, nextPath, [...ancestors, nextPath]);
+            });
+            return;
+          }
+          if (value !== null && typeof value === 'object') {
+            Object.entries(value).forEach(([key, child]) => {
+              if (truncated) return;
+              const nextPath = childPath(path, key, false);
+              const nextAncestors = [...ancestors, nextPath];
+              if (key.toLocaleLowerCase().includes(needle)) {
+                addResult({ path: nextPath, hitType: '键名', value: child, ancestors: nextAncestors });
+              }
+              visit(child, nextPath, nextAncestors);
+            });
+            return;
+          }
+          if (String(value).toLocaleLowerCase().includes(needle)) {
+            addResult({ path, hitType: '叶子值', value, ancestors });
+          }
+        }
+        visit(root, '$', ['$']);
+        return { results, truncated };
+      }
+
+      function escapeHtmlText(text) {
+        return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      }
+
+      function scanJsonTokens(text) {
+        const BRACKET_COLOR_COUNT = 6;
+        const isWs = ch => ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r';
+        const tokens = [];
+        let depth = 0;
+        let i = 0;
+        let plainStart = -1;
+        const flushPlain = end => {
+          if (plainStart >= 0 && end > plainStart) {
+            tokens.push({ type: 'plain', start: plainStart, end });
+          }
+          plainStart = -1;
+        };
+        while (i < text.length) {
+          const ch = text[i];
+          if (ch === '"') {
+            let j = i + 1;
+            while (j < text.length) {
+              if (text[j] === '\\') j += 2;
+              else if (text[j] === '"') { j += 1; break; }
+              else j += 1;
+            }
+            j = Math.min(j, text.length);
+            let k = j;
+            while (k < text.length && isWs(text[k])) k += 1;
+            flushPlain(i);
+            tokens.push({ type: text[k] === ':' ? 'key' : 'string', start: i, end: j });
+            i = j;
+          } else if ('{[('.includes(ch) || '}])'.includes(ch)) {
+            const isOpener = '{[('.includes(ch);
+            flushPlain(i);
+            let cls;
+            if (isOpener) {
+              cls = `b${depth % BRACKET_COLOR_COUNT}`;
+              depth += 1;
+            } else {
+              depth = Math.max(0, depth - 1);
+              cls = `b${depth % BRACKET_COLOR_COUNT}`;
+            }
+            tokens.push({ type: cls, start: i, end: i + 1 });
+            i += 1;
+          } else if (/[0-9]/.test(ch) || (ch === '-' && /[0-9]/.test(text[i + 1] || ''))) {
+            const match = text.slice(i).match(/^-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?/);
+            const token = match ? match[0] : ch;
+            flushPlain(i);
+            tokens.push({ type: 'number', start: i, end: i + token.length });
+            i += token.length;
+          } else if (/[a-z]/i.test(ch)) {
+            const match = text.slice(i, i + 5).match(/^(true|false|null)/);
+            if (match) {
+              flushPlain(i);
+              tokens.push({ type: match[1] === 'null' ? 'null' : 'boolean', start: i, end: i + match[1].length });
+              i += match[1].length;
+            } else {
+              if (plainStart < 0) plainStart = i;
+              i += 1;
+            }
+          } else {
+            if (plainStart < 0) plainStart = i;
+            i += 1;
+          }
+        }
+        flushPlain(text.length);
+        return tokens;
+      }
+
+      function highlightJsonCode(text, locatedRange = null) {
+        const tokens = scanJsonTokens(text);
+        const rangeStart = locatedRange ? Math.max(0, Math.min(locatedRange.start, text.length)) : 0;
+        const rangeEnd = locatedRange ? Math.max(rangeStart, Math.min(locatedRange.end, text.length)) : 0;
+        let html = '';
+        for (const token of tokens) {
+          let pos = token.start;
+          while (pos < token.end) {
+            const inside = pos >= rangeStart && pos < rangeEnd;
+            const pieceEnd = inside ? Math.min(token.end, rangeEnd)
+              : (pos < rangeStart ? Math.min(token.end, rangeStart) : token.end);
+            const piece = escapeHtmlText(text.slice(pos, pieceEnd));
+            if (token.type === 'plain') {
+              html += inside ? `<span class="code-located">${piece}</span>` : piece;
+            } else if (inside) {
+              html += `<span class="code-located"><span class="tok-${token.type}">${piece}</span></span>`;
+            } else {
+              html += `<span class="tok-${token.type}">${piece}</span>`;
+            }
+            pos = pieceEnd;
+          }
+        }
+        return html;
+      }
+
+      function createHighlightPane(textarea, highlight) {
+        let pending = false;
+        const pane = {
+          textarea,
+          highlight,
+          locatedRange: null,
+          refresh() {
+            if (pane.locatedRange && pane.locatedRange.text !== textarea.value) {
+              pane.locatedRange = null;
+            }
+            highlight.innerHTML = highlightJsonCode(textarea.value, pane.locatedRange);
+            pane.syncScroll();
+          },
+          syncScroll() {
+            highlight.scrollTop = textarea.scrollTop;
+            highlight.scrollLeft = textarea.scrollLeft;
+          },
+          clearLocated() {
+            if (pane.locatedRange) {
+              pane.locatedRange = null;
+              pane.refresh();
+            }
+          },
+          schedule() {
+            if (pending) return;
+            pending = true;
+            requestAnimationFrame(() => {
+              pending = false;
+              pane.refresh();
+            });
+          }
+        };
+        textarea.addEventListener('scroll', () => pane.syncScroll());
+        return pane;
+      }
+
+      function createCodePositionCache(getText) {
+        let cachedSource = null;
+        let cachedMap = null;
+        return () => {
+          const text = getText();
+          if (cachedSource === text && cachedMap) return cachedMap;
+          cachedSource = text;
+          cachedMap = null;
+          try {
+            cachedMap = buildCodePositions(text);
+          } catch (_) {
+            cachedMap = new Map();
+          }
+          return cachedMap;
+        };
+      }
+
+      const codePane = createHighlightPane(elements.input, elements.codeHighlight);
+      const diffLeftPane = createHighlightPane(elements.diffLeftInput, elements.diffLeftHighlight);
+      const diffRightPane = createHighlightPane(elements.diffInput, elements.diffRightHighlight);
+      const mainPositions = createCodePositionCache(() => elements.input.value);
+      const diffLeftPositions = createCodePositionCache(() => elements.diffLeftInput.value);
+      const diffRightPositions = createCodePositionCache(() => elements.diffInput.value);
+
+      function refreshCodeHighlight() {
+        codePane.refresh();
+      }
+
+      function scheduleCodeHighlight() {
+        codePane.schedule();
+      }
+
+      function syncCodeScroll() {
+        codePane.syncScroll();
+      }
+
+      function buildCodePositions(text) {
+        const map = new Map();
+        let i = 0;
+        const isWs = ch => ch === ' ' || ch === '\t' || ch === '\n' || ch === '\r';
+        function skipWs() {
+          while (i < text.length && isWs(text[i])) i += 1;
+        }
+        function parseStringToken() {
+          const start = i;
+          i += 1;
+          while (i < text.length) {
+            if (text[i] === '\\') i += 2;
+            else if (text[i] === '"') { i += 1; break; }
+            else i += 1;
+          }
+          return { start, end: Math.min(i, text.length) };
+        }
+        function parseValue(path, keyMeta) {
+          skipWs();
+          const valueStart = i;
+          const ch = text[i];
+          const meta = keyMeta ? { ...keyMeta } : {};
+          if (ch === '{') {
+            i += 1;
+            skipWs();
+            if (text[i] === '}') i += 1;
+            else {
+              while (i < text.length) {
+                skipWs();
+                if (text[i] !== '"') break;
+                const key = parseStringToken();
+                skipWs();
+                if (text[i] === ':') i += 1;
+                let keyName;
+                try {
+                  keyName = JSON.parse(text.slice(key.start, key.end));
+                } catch (_) {
+                  throw new Error('路径解析失败');
+                }
+                parseValue(childPath(path, keyName, false), { keyStart: key.start, keyEnd: key.end });
+                skipWs();
+                if (text[i] === ',') { i += 1; continue; }
+                if (text[i] === '}') { i += 1; }
+                break;
+              }
+            }
+          } else if (ch === '[') {
+            i += 1;
+            skipWs();
+            if (text[i] === ']') i += 1;
+            else {
+              let index = 0;
+              while (i < text.length) {
+                parseValue(`${path}[${index}]`, null);
+                index += 1;
+                skipWs();
+                if (text[i] === ',') { i += 1; continue; }
+                if (text[i] === ']') { i += 1; }
+                break;
+              }
+            }
+          } else if (ch === '"') {
+            const token = parseStringToken();
+            meta.valueStart = token.start;
+            meta.valueEnd = token.end;
+            map.set(path, meta);
+            return;
+          } else {
+            const match = text.slice(i).match(/^(true|false|null|-?\d+(?:\.\d+)?(?:[eE][+-]?\d+)?)/);
+            const token = match ? match[0] : (ch || '');
+            i += token.length;
+          }
+          meta.valueStart = valueStart;
+          meta.valueEnd = i;
+          map.set(path, meta);
+        }
+        parseValue('$', null);
+        return map;
+      }
+
+      function clearTreeHighlight() {
+        if (highlightedTreeNode) highlightedTreeNode.classList.remove('tree-located');
+        highlightedTreeNode = null;
+      }
+
+      function buildPathAncestors(path) {
+        const ancestors = ['$'];
+        if (!path || path === '$') return ancestors;
+        let cursor = path.startsWith('$') ? 1 : 0;
+        while (cursor < path.length) {
+          const remainder = path.slice(cursor);
+          const indexMatch = remainder.match(/^\[\d+\]/);
+          const quotedMatch = remainder.match(/^\[("(?:\\.|[^"\\])*")\]/);
+          const keyMatch = remainder.match(/^\.([A-Za-z_$][\w$]*)/);
+          if (indexMatch) cursor += indexMatch[0].length;
+          else if (quotedMatch) cursor += quotedMatch[0].length;
+          else if (keyMatch) cursor += keyMatch[0].length;
+          else break;
+          ancestors.push(path.slice(0, cursor));
+        }
+        return ancestors;
+      }
+
+      function locateInCodePane(pane, getPositions, path, preferKey, silent) {
+        const positions = getPositions();
+        let meta = positions.get(path) || null;
+        let note = '';
+        if (!meta) {
+          const ancestors = buildPathAncestors(path);
+          for (let i = ancestors.length - 2; i >= 0; i -= 1) {
+            const parent = positions.get(ancestors[i]);
+            if (parent) {
+              meta = parent;
+              note = '该路径在当前 JSON 中不存在，已定位到最近的父节点';
+              break;
+            }
+          }
+        }
+        if (!meta) return { status: 'miss', note: '' };
+        const useKey = preferKey && Number.isInteger(meta.keyStart) && Number.isInteger(meta.keyEnd);
+        let start = useKey ? meta.keyStart : meta.valueStart;
+        let end = useKey ? meta.keyEnd : meta.valueEnd;
+        if (!Number.isInteger(start) || !Number.isInteger(end) || end <= start) {
+          return { status: 'miss', note: '' };
+        }
+        const rangeLength = end - start;
+        const opening = pane.textarea.value.charAt(start);
+        const isContainer = opening === '{' || opening === '[';
+        if (rangeLength > 400 || isContainer) {
+          end = start + 1;
+          if (!note) note = '该节点为容器或内容较长，已定位到起始位置';
+        }
+        const textarea = pane.textarea;
+        pane.locatedRange = { start, end, text: textarea.value };
+        textarea.setSelectionRange(start, start);
+        const line = (textarea.value.slice(0, start).match(/\n/g) || []).length;
+        const lineHeight = parseFloat(getComputedStyle(textarea).lineHeight) || 22;
+        textarea.scrollTop = Math.max(0, line * lineHeight - textarea.clientHeight / 2);
+        pane.refresh();
+        if (!silent && note) showToast(note);
+        return { status: note ? 'fallback' : 'exact', note };
+      }
+
+      function locatePathInCode(path, preferKey = false) {
+        const outcome = locateInCodePane(codePane, mainPositions, path, preferKey, false);
+        if (outcome.status === 'miss') {
+          codePane.clearLocated();
+          showToast('未能定位该内容，请检查 JSON 是否有效');
+          return;
+        }
+        codePane.textarea.focus({ preventScroll: true });
+      }
+
+      function locateTreePath(path) {
+        clearTreeHighlight();
+        buildPathAncestors(path).slice(0, -1).forEach(prefix => {
+          const node = treeNodeIndex.get(prefix);
+          if (node && node.matches('details.tree-node')) {
+            node.open = true;
+            if (node._populate) node._populate();
+          }
+        });
+        const target = treeNodeIndex.get(path);
+        if (!target) {
+          showToast('未能定位该节点，请重新解析 JSON');
+          return false;
+        }
+        target.classList.add('tree-located');
+        highlightedTreeNode = target;
+        requestAnimationFrame(() => target.scrollIntoView({ behavior: 'smooth', block: 'center' }));
+        return true;
+      }
+
+      function locateByPath(path, preferKey = false) {
+        if (activeView === 'code') {
+          locatePathInCode(path, preferKey);
+          return;
+        }
+        if (activeView === 'diff') {
+          diffLeftPane.clearLocated();
+          diffRightPane.clearLocated();
+          const left = locateInCodePane(diffLeftPane, diffLeftPositions, path, preferKey, true);
+          const right = locateInCodePane(diffRightPane, diffRightPositions, path, preferKey, true);
+          if (left.status === 'miss' && right.status === 'miss') {
+            showToast('未能定位该路径，请检查两侧 JSON');
+          }
+          return;
+        }
+        switchView('tree');
+        locateTreePath(path);
+      }
+
+      function locateSearchResult(result) {
+        locateByPath(result.path, result.hitType === '键名');
+      }
+
+      function renderSearchResults(results, truncated = false, emptyMessage = '没有找到匹配项') {
+        currentSearchResults = results;
+        elements.searchCount.textContent = truncated ? `${results.length}+` : results.length;
+        elements.searchResults.replaceChildren();
+        if (!results.length) {
+          elements.searchResults.append(createEmpty(emptyMessage));
+          return;
+        }
+        results.forEach(result => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'search-result';
+          const meta = document.createElement('div');
+          meta.className = 'result-meta';
+          const path = document.createElement('span');
+          path.className = 'path';
+          path.textContent = result.path;
+          const type = document.createElement('span');
+          type.className = 'type-tag';
+          type.textContent = result.hitType;
+          const snippet = document.createElement('div');
+          snippet.className = 'search-snippet';
+          snippet.textContent = summarizeValue(result.value);
+          meta.append(path, type);
+          button.append(meta, snippet);
+          button.addEventListener('click', () => locateSearchResult(result));
+          elements.searchResults.appendChild(button);
+        });
+        if (truncated) {
+          const notice = document.createElement('div');
+          notice.className = 'summary-line';
+          notice.textContent = `结果超过 ${SEARCH_RESULT_LIMIT} 条，仅显示前 ${SEARCH_RESULT_LIMIT} 条`;
+          elements.searchResults.appendChild(notice);
+        }
+      }
+
+      function runSearch() {
+        const data = parseJson(false);
+        if (data === null && parsedData === undefined) return;
+        const query = elements.searchInput.value.trim();
+        if (!query) {
+          renderSearchResults([], false, '请输入搜索关键词');
+          return;
+        }
+        const outcome = searchJson(data, query);
+        renderSearchResults(outcome.results, outcome.truncated);
+      }
+
+      function runQuery() {
+        const data = parseJson(false);
+        if (data === null && parsedData === undefined) return;
+        const segments = parsePath(elements.path.value);
+        if (!segments.length) {
+          currentMatches = [];
+          renderResults([], '请输入有效查询路径');
+          return;
+        }
+        currentMatches = findAllMatches(data, segments);
+        renderResults(currentMatches);
+      }
+
+      function renderResults(matches, emptyMessage = '没有找到匹配值') {
+        elements.matchCount.textContent = matches.length;
+        elements.results.replaceChildren();
+        if (!matches.length) {
+          elements.results.append(createEmpty(emptyMessage));
+          return;
+        }
+        matches.forEach((match, index) => {
+          const article = document.createElement('article');
+          article.className = 'result-item';
+          const meta = document.createElement('div');
+          meta.className = 'result-meta';
+          const path = document.createElement('button');
+          path.type = 'button';
+          path.className = 'path path-link';
+          path.title = '点击跳转到对应位置';
+          path.textContent = match.path;
+          path.addEventListener('click', () => locateByPath(currentMatches[index].path));
+          const type = document.createElement('span');
+          type.className = 'type-tag';
+          type.textContent = getType(match.value);
+          meta.append(path, type);
+          const pre = document.createElement('pre');
+          pre.textContent = valueText(match.value);
+          const actions = document.createElement('div');
+          actions.className = 'result-actions';
+          const copyButton = document.createElement('button');
+          copyButton.type = 'button';
+          copyButton.className = 'small quiet';
+          copyButton.textContent = '复制值';
+          copyButton.addEventListener('click', () => copyText(valueText(currentMatches[index].value), '已复制该值', true));
+          actions.appendChild(copyButton);
+          article.append(meta, pre, actions);
+          elements.results.appendChild(article);
+        });
+      }
+
+      function csvCell(value) {
+        let text = String(value);
+        if (/^[\t\r\n ]*[=+\-@]/.test(text)) text = `'${text}`;
+        return `"${text.replace(/"/g, '""')}"`;
+      }
+
+      function exportResultsCsv() {
+        if (!currentMatches.length) {
+          showToast('没有可导出的查询结果');
+          return;
+        }
+        const rows = [['path', 'type', 'value']];
+        currentMatches.forEach(match => {
+          const type = getType(match.value);
+          const value = type === 'object' || type === 'array' ? JSON.stringify(match.value) : valueText(match.value);
+          rows.push([match.path, type, value]);
+        });
+        const csv = `\uFEFF${rows.map(row => row.map(csvCell).join(',')).join('\r\n')}`;
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `json-query-${new Date().toISOString().slice(0, 10)}.csv`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+        showToast(`已导出 ${currentMatches.length} 条查询结果`);
+      }
+
+      function compareJsonValues(left, right) {
+        const records = [];
+        const stats = { added: 0, deleted: 0, modified: 0, total: 0 };
+        function record(kind, path, leftValue, rightValue, leftExists, rightExists) {
+          stats[kind] += 1;
+          stats.total += 1;
+          if (records.length < DIFF_RENDER_LIMIT) {
+            records.push({ kind, path, leftValue, rightValue, leftExists, rightExists });
+          }
+        }
+        function walk(leftValue, rightValue, path, leftExists = true, rightExists = true) {
+          if (!leftExists) {
+            record('added', path, undefined, rightValue, false, true);
+            return;
+          }
+          if (!rightExists) {
+            record('deleted', path, leftValue, undefined, true, false);
+            return;
+          }
+          const leftType = getType(leftValue);
+          const rightType = getType(rightValue);
+          if (leftType !== rightType) {
+            record('modified', path, leftValue, rightValue, true, true);
+            return;
+          }
+          if (leftType === 'array') {
+            const length = Math.max(leftValue.length, rightValue.length);
+            for (let index = 0; index < length; index += 1) {
+              walk(leftValue[index], rightValue[index], `${path}[${index}]`, index < leftValue.length, index < rightValue.length);
+            }
+            return;
+          }
+          if (leftType === 'object') {
+            const keys = new Set([...Object.keys(leftValue), ...Object.keys(rightValue)]);
+            keys.forEach(key => {
+              const inLeft = Object.prototype.hasOwnProperty.call(leftValue, key);
+              const inRight = Object.prototype.hasOwnProperty.call(rightValue, key);
+              walk(leftValue[key], rightValue[key], childPath(path, key, false), inLeft, inRight);
+            });
+            return;
+          }
+          if (!Object.is(leftValue, rightValue)) record('modified', path, leftValue, rightValue, true, true);
+        }
+        walk(left, right, '$');
+        return { records, stats, truncated: stats.total > records.length };
+      }
+
+      function renderDiffResults(outcome) {
+        const labels = { added: '新增', deleted: '删除', modified: '修改' };
+        elements.diffCount.textContent = outcome.stats.total;
+        elements.diffSummary.textContent = `新增 ${outcome.stats.added} · 删除 ${outcome.stats.deleted} · 修改 ${outcome.stats.modified} · 共 ${outcome.stats.total}${outcome.truncated ? `（仅显示前 ${DIFF_RENDER_LIMIT} 条）` : ''}`;
+        elements.diffResults.replaceChildren();
+        if (!outcome.records.length) {
+          elements.diffResults.append(createEmpty('两份 JSON 内容一致'));
+          return;
+        }
+        outcome.records.forEach(record => {
+          const article = document.createElement('article');
+          article.className = `result-item diff-${record.kind}`;
+          const meta = document.createElement('div');
+          meta.className = 'result-meta';
+          const path = document.createElement('button');
+          path.type = 'button';
+          path.className = 'path path-link';
+          path.title = '点击跳转主输入对应位置';
+          path.textContent = record.path;
+          path.addEventListener('click', () => locateByPath(record.path));
+          const type = document.createElement('span');
+          type.className = 'type-tag';
+          type.textContent = labels[record.kind];
+          meta.append(path, type);
+          const values = document.createElement('div');
+          values.className = 'diff-values';
+          [['左侧', record.leftExists, record.leftValue], ['右侧', record.rightExists, record.rightValue]].forEach(([label, exists, value]) => {
+            const column = document.createElement('div');
+            const caption = document.createElement('div');
+            caption.className = 'diff-value-label';
+            caption.textContent = label;
+            const pre = document.createElement('pre');
+            pre.textContent = exists ? valueText(value) : '不存在';
+            column.append(caption, pre);
+            values.appendChild(column);
+          });
+          article.append(meta, values);
+          elements.diffResults.appendChild(article);
+        });
+        if (outcome.truncated) {
+          const notice = document.createElement('div');
+          notice.className = 'summary-line';
+          notice.textContent = `差异超过 ${DIFF_RENDER_LIMIT} 条，已停止渲染其余明细`;
+          elements.diffResults.appendChild(notice);
+        }
+      }
+
+      function parseDiffSide(rawText, label) {
+        const text = rawText.charCodeAt(0) === 0xFEFF ? rawText.slice(1) : rawText;
+        if (!text.trim()) {
+          showToast(`请输入${label}侧 JSON`);
+          return { error: 'empty' };
+        }
+        try {
+          return { value: JSON.parse(text) };
+        } catch (error) {
+          elements.diffSummary.textContent = `${label}侧 JSON 解析失败：${locateJsonError(text, error.message)}`;
+          showToast(`${label}侧 JSON 格式有误`);
+          return { error: 'parse' };
+        }
+      }
+
+      function runDiff() {
+        const left = parseDiffSide(elements.diffLeftInput.value, '左');
+        if (left.error) return;
+        const right = parseDiffSide(elements.diffInput.value, '右');
+        if (right.error) return;
+        renderDiffResults(compareJsonValues(left.value, right.value));
+      }
+
+      function clearDiffResults(message = '对比结果会区分新增、删除和修改') {
+        elements.diffCount.textContent = '0';
+        elements.diffSummary.textContent = '尚未开始对比';
+        elements.diffResults.replaceChildren(createEmpty(message));
+      }
+
+      function swapDiffInputs() {
+        const leftText = elements.diffLeftInput.value;
+        elements.diffLeftInput.value = elements.diffInput.value;
+        elements.diffInput.value = leftText;
+        diffLeftSyncSource = null;
+        diffLeftPane.locatedRange = null;
+        diffRightPane.locatedRange = null;
+        diffLeftPane.refresh();
+        diffRightPane.refresh();
+        clearDiffResults('左右已交换，请重新开始对比');
+        showToast('已交换左右 JSON');
+      }
+
+      function createEmpty(text) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.textContent = text;
+        return empty;
+      }
+
+      function resetPanels() {
+        renderStats({ arrays: [], arrayItems: 0, objects: 0, maxDepth: 0 });
+        elements.arrays.replaceChildren(createEmpty('解析 JSON 后显示每个数组的路径和长度'));
+        clearTreeHighlight();
+        treeNodeIndex.clear();
+        elements.jsonTree.replaceChildren(createEmpty('解析 JSON 后可切换到树视图'));
+        updatePathSuggestions(undefined);
+        renderedTreeSource = null;
+        currentMatches = [];
+        renderResults([], '输入路径后查询，匹配结果会显示在这里');
+        renderSearchResults([], false, '输入关键词后搜索当前 JSON');
+        clearDiffResults();
+      }
+
+      async function copyText(text, successMessage, allowEmpty = false) {
+        if (text === undefined || text === null || (text === '' && !allowEmpty)) {
+          showToast('没有可复制的内容');
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch (_) {
+          const helper = document.createElement('textarea');
+          helper.value = text;
+          helper.style.position = 'fixed';
+          helper.style.opacity = '0';
+          document.body.appendChild(helper);
+          helper.select();
+          document.execCommand('copy');
+          helper.remove();
+        }
+        showToast(successMessage);
+      }
+
+      function flattenJsonValue(root) {
+        const flattened = Object.create(null);
+        function visit(value, path) {
+          const type = getType(value);
+          if (type === 'array') {
+            if (!value.length) flattened[path] = [];
+            else value.forEach((child, index) => visit(child, `${path}[${index}]`));
+            return;
+          }
+          if (type === 'object') {
+            const entries = Object.entries(value);
+            if (!entries.length) flattened[path] = {};
+            else entries.forEach(([key, child]) => {
+              if (DANGEROUS_KEYS.has(key)) throw new Error(`对象包含危险键：${key}`);
+              visit(child, childPath(path, key, false));
+            });
+            return;
+          }
+          flattened[path] = value;
+        }
+        visit(root, '$');
+        return flattened;
+      }
+
+      function parseFlatPath(path) {
+        if (path === '$') return [];
+        if (typeof path !== 'string' || !path.startsWith('$')) throw new Error(`无效路径：${path}`);
+        const tokens = [];
+        let cursor = 1;
+        while (cursor < path.length) {
+          const remainder = path.slice(cursor);
+          const dotMatch = remainder.match(/^\.([A-Za-z_$][\w$]*)/);
+          if (dotMatch) {
+            const key = dotMatch[1];
+            if (DANGEROUS_KEYS.has(key)) throw new Error(`路径包含危险键：${key}`);
+            tokens.push(key);
+            cursor += dotMatch[0].length;
+            continue;
+          }
+          const indexMatch = remainder.match(/^\[(0|[1-9]\d*)\]/);
+          if (indexMatch) {
+            const index = Number(indexMatch[1]);
+            if (!Number.isSafeInteger(index) || index > MAX_ARRAY_INDEX) throw new Error(`数组索引过大：${indexMatch[1]}`);
+            tokens.push(index);
+            cursor += indexMatch[0].length;
+            continue;
+          }
+          const keyMatch = remainder.match(/^\[("(?:\\.|[^"\\])*")\]/);
+          if (keyMatch) {
+            const key = JSON.parse(keyMatch[1]);
+            if (DANGEROUS_KEYS.has(key)) throw new Error(`路径包含危险键：${key}`);
+            tokens.push(key);
+            cursor += keyMatch[0].length;
+            continue;
+          }
+          if (/^\.\*|^\[\*\]/.test(remainder)) throw new Error('反扁平化路径不允许通配符');
+          throw new Error(`无效路径：${path}`);
+        }
+        return tokens;
+      }
+
+      function assertSafeJsonValue(value) {
+        if (Array.isArray(value)) {
+          value.forEach(assertSafeJsonValue);
+        } else if (value !== null && typeof value === 'object') {
+          Object.entries(value).forEach(([key, child]) => {
+            if (DANGEROUS_KEYS.has(key)) throw new Error(`值中包含危险键：${key}`);
+            assertSafeJsonValue(child);
+          });
+        }
+      }
+
+      function unflattenJsonValue(mapping) {
+        if (mapping === null || Array.isArray(mapping) || typeof mapping !== 'object' || Object.getPrototypeOf(mapping) !== Object.prototype) {
+          throw new Error('反扁平化只接受普通 JSON 对象映射');
+        }
+        const entries = Object.entries(mapping);
+        if (!entries.length) throw new Error('路径映射不能为空');
+        entries.forEach(([, value]) => assertSafeJsonValue(value));
+        if (Object.prototype.hasOwnProperty.call(mapping, '$')) {
+          if (entries.length !== 1) throw new Error('根路径与子路径冲突');
+          return mapping.$;
+        }
+
+        const trie = { children: new Map(), terminal: false };
+        entries.forEach(([path, value]) => {
+          const tokens = parseFlatPath(path);
+          if (!tokens.length) throw new Error('根路径与子路径冲突');
+          let node = trie;
+          tokens.forEach(token => {
+            if (node.terminal) throw new Error(`路径冲突：${path}`);
+            const tokenId = `${typeof token}:${String(token)}`;
+            if (!node.children.has(tokenId)) {
+              node.children.set(tokenId, { token, children: new Map(), terminal: false, value: undefined });
+            }
+            node = node.children.get(tokenId);
+          });
+          if (node.terminal || node.children.size) throw new Error(`路径冲突：${path}`);
+          node.terminal = true;
+          node.value = value;
+        });
+
+        function build(node) {
+          if (node.terminal) return node.value;
+          const children = [...node.children.values()];
+          const usesIndexes = children.every(child => typeof child.token === 'number');
+          const usesKeys = children.every(child => typeof child.token === 'string');
+          if (!usesIndexes && !usesKeys) throw new Error('对象键与数组索引发生路径冲突');
+          if (usesIndexes) {
+            const result = [];
+            children.forEach(child => { result[child.token] = build(child); });
+            for (let index = 0; index < result.length; index += 1) {
+              if (!Object.prototype.hasOwnProperty.call(result, index)) result[index] = null;
+            }
+            return result;
+          }
+          const result = {};
+          children.forEach(child => { result[child.token] = build(child); });
+          return result;
+        }
+        return build(trie);
+      }
+
+      function writeMainJson(value, message) {
+        elements.input.value = JSON.stringify(value, null, 2);
+        resetPanels();
+        parseJson(false);
+        showToast(message);
+      }
+
+      function flattenCurrentJson() {
+        const data = parseJson();
+        if (data === null && parsedData === undefined) return;
+        try {
+          writeMainJson(flattenJsonValue(data), 'JSON 已扁平化');
+        } catch (error) {
+          showToast(`扁平化失败：${error.message}`);
+        }
+      }
+
+      function unflattenCurrentJson() {
+        const data = parseJson();
+        if (data === null && parsedData === undefined) return;
+        try {
+          const restored = unflattenJsonValue(data);
+          writeMainJson(restored, 'JSON 已反扁平化');
+        } catch (error) {
+          showToast(`反扁平化失败：${error.message}`);
+        }
+      }
+
+      function formatJson() {
+        const data = parseJson();
+        if (data === null && parsedData === undefined) return;
+        elements.input.value = JSON.stringify(data, null, 2);
+        parseJson(false);
+        showToast('JSON 已格式化');
+      }
+
+      function minifyJson() {
+        const data = parseJson();
+        if (data === null && parsedData === undefined) return;
+        elements.input.value = JSON.stringify(data);
+        parseJson(false);
+        showToast('JSON 已压缩');
+      }
+
+      function downloadJson() {
+        const data = parseJson();
+        if (data === null && parsedData === undefined) return;
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `formatted-${new Date().toISOString().slice(0, 10)}.json`;
+        link.click();
+        URL.revokeObjectURL(link.href);
+        showToast('JSON 文件已生成');
+      }
+
+      function loadFile(file) {
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = () => {
+          elements.input.value = String(reader.result || '');
+          resetPanels();
+          formatJson();
+        };
+        reader.onerror = () => showToast('文件读取失败');
+        reader.readAsText(file);
+      }
+
+      elements.jsonTree.addEventListener('contextmenu', event => {
+        const node = event.target.closest('[data-json-path]');
+        if (!node || !elements.jsonTree.contains(node)) return;
+        event.preventDefault();
+        showTreeContextMenu(event.clientX, event.clientY, node.dataset.jsonPath, node);
+      });
+      elements.expandCurrentNodeBtn.addEventListener('click', expandCurrentTreeNode);
+      elements.collapseCurrentNodeBtn.addEventListener('click', collapseCurrentTreeNode);
+      elements.copyTreePathBtn.addEventListener('click', () => {
+        const path = selectedTreePath;
+        hideTreeContextMenu();
+        copyText(path, `路径已复制：${path}`, true);
+      });
+      document.addEventListener('pointerdown', event => {
+        if (!elements.treeContextMenu.hidden && !elements.treeContextMenu.contains(event.target)) hideTreeContextMenu();
+      });
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape') hideTreeContextMenu();
+      });
+      window.addEventListener('resize', hideTreeContextMenu);
+      window.addEventListener('scroll', hideTreeContextMenu, true);
+      elements.codeViewBtn.addEventListener('click', () => switchView('code'));
+      elements.treeViewBtn.addEventListener('click', () => switchView('tree'));
+      elements.diffViewBtn.addEventListener('click', () => switchView('diff'));
+      document.getElementById('expandAllBtn').addEventListener('click', () => setTreeExpanded(true));
+      document.getElementById('collapseAllBtn').addEventListener('click', () => setTreeExpanded(false));
+      document.getElementById('formatBtn').addEventListener('click', formatJson);
+      document.getElementById('minifyBtn').addEventListener('click', minifyJson);
+      document.getElementById('flattenBtn').addEventListener('click', flattenCurrentJson);
+      document.getElementById('unflattenBtn').addEventListener('click', unflattenCurrentJson);
+      document.getElementById('copyJsonBtn').addEventListener('click', () => copyText(elements.input.value, 'JSON 已复制'));
+      document.getElementById('downloadBtn').addEventListener('click', downloadJson);
+      document.getElementById('uploadBtn').addEventListener('click', () => elements.fileInput.click());
+      document.getElementById('exampleBtn').addEventListener('click', () => {
+        elements.input.value = JSON.stringify(exampleData, null, 2);
+        elements.path.value = 'order.items.sku';
+        resetPanels();
+        parseJson(false);
+        runQuery();
+        showToast('已载入示例数据');
+      });
+      document.getElementById('clearBtn').addEventListener('click', () => {
+        elements.input.value = '';
+        elements.path.value = '';
+        parseJson(false);
+        switchView('code');
+        elements.input.focus();
+      });
+      document.getElementById('queryBtn').addEventListener('click', runQuery);
+      document.getElementById('searchBtn').addEventListener('click', runSearch);
+      document.getElementById('diffBtn').addEventListener('click', runDiff);
+      document.getElementById('swapDiffBtn').addEventListener('click', swapDiffInputs);
+      document.getElementById('exportResultsCsvBtn').addEventListener('click', exportResultsCsv);
+      document.getElementById('copyUniqueResultsBtn').addEventListener('click', () => {
+        const values = currentMatches.map(match => match.value);
+        const uniqueValues = uniqueJsonValues(values);
+        copyText(
+          uniqueValues.length ? JSON.stringify(uniqueValues, null, 2) : '',
+          `已去重复制：${values.length} → ${uniqueValues.length}`
+        );
+      });
+      document.getElementById('copyResultsBtn').addEventListener('click', () => {
+        const values = currentMatches.map(match => match.value);
+        copyText(values.length ? JSON.stringify(values, null, 2) : '', '全部查询值已复制');
+      });
+      elements.fileInput.addEventListener('change', event => loadFile(event.target.files[0]));
+      elements.path.addEventListener('keydown', event => {
+        if (event.key === 'Enter') runQuery();
+      });
+      elements.path.addEventListener('input', () => {
+        currentMatches = [];
+        renderResults([], '路径已修改，请重新查询');
+      });
+      elements.searchInput.addEventListener('keydown', event => {
+        if (event.key === 'Enter') runSearch();
+      });
+      elements.searchInput.addEventListener('input', () => {
+        renderSearchResults([], false, '关键词已修改，请重新搜索');
+        clearTreeHighlight();
+      });
+      elements.diffInput.addEventListener('input', () => {
+        diffRightPane.schedule();
+        clearDiffResults('对比 JSON 已修改，请重新开始对比');
+      });
+      elements.diffLeftInput.addEventListener('input', () => {
+        diffLeftPane.schedule();
+        clearDiffResults('左侧 JSON 已修改，请重新开始对比');
+      });
+      elements.input.addEventListener('input', () => {
+        scheduleCodeHighlight();
+        elements.size.textContent = formatBytes(new Blob([elements.input.value]).size);
+        parsedData = undefined;
+        resetPanels();
+        setStatus('内容已修改，点击“格式化”进行解析');
+        clearTimeout(suggestionTimer);
+        suggestionTimer = setTimeout(() => {
+          try {
+            updatePathSuggestions(JSON.parse(elements.input.value));
+          } catch (_) {
+            updatePathSuggestions(undefined);
+          }
+        }, 160);
+      });
+      elements.input.addEventListener('keydown', event => {
+        if ((event.metaKey || event.ctrlKey) && event.key === 'Enter') {
+          event.preventDefault();
+          formatJson();
+        }
+        if (event.key === 'Tab') {
+          event.preventDefault();
+          const start = elements.input.selectionStart;
+          const end = elements.input.selectionEnd;
+          elements.input.setRangeText('  ', start, end, 'end');
+        }
+      });
+      ['dragenter', 'dragover'].forEach(type => elements.editorCard.addEventListener(type, event => {
+        event.preventDefault();
+        elements.editorCard.classList.add('drop-active');
+      }));
+      ['dragleave', 'drop'].forEach(type => elements.editorCard.addEventListener(type, event => {
+        event.preventDefault();
+        elements.editorCard.classList.remove('drop-active');
+      }));
+      elements.editorCard.addEventListener('drop', event => loadFile(event.dataTransfer.files[0]));
+      refreshCodeHighlight();
+    })();
+  </script>
+</body>
+</html>
