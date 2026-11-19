@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JSON 工具箱 V12 · 开发者 白柚</title>
+  <title>JSON 工具箱 V15 · 开发者 白柚</title>
   <style>
     :root {
       --color-page: #F5F6FA;
@@ -400,7 +400,7 @@
       <div class="brand-text">
         <div class="title-row">
           <h1>JSON 工具箱</h1>
-          <span class="version-badge">V12</span>
+          <span class="version-badge">V15</span>
         </div>
         <p class="subtitle">格式化<span class="sep">·</span>树视图<span class="sep">·</span>JSON 对比<span class="sep">·</span>全文搜索定位<span class="sep">·</span>路径补全<span class="sep">·</span>CSV 导出<span class="sep">·</span>扁平化<span class="sep">·</span>语法高亮</p>
       </div>
@@ -488,7 +488,7 @@
           <datalist id="pathSuggestions"></datalist>
           <button class="primary" id="queryBtn" type="button">查询</button>
         </div>
-        <p class="hint">解析后自动补全（数组归一为 <code>*</code>）；支持 <code>a.b.c</code>、<code>items.*.name</code>、<code>items[0].name</code>。按 Enter 查询，点击结果路径可跳转。</p>
+        <p class="hint">解析后自动补全（数组归一为 <code>*</code>）；支持 <code>a.b.c</code>、<code>items.*.name</code>、<code>items[0].name</code>。无结果时 <code>*</code> 自动升级为深度匹配（可跨 0 段或多段；扁平化 JSON 按键名通配）。按 Enter 查询，点击结果路径可跳转。</p>
       </section>
 
       <section class="card" aria-labelledby="searchTitle">
@@ -550,14 +550,14 @@
   <div class="ad-marquee" role="note" aria-label="广告位招租公告">
     <div class="ad-track">
       <span class="ad-group">
-        <span class="ad-strong">广告位招租</span><span class="ad-sep">·</span>虚位以待<span class="ad-sep">·</span>本工具由 <span class="ad-name">白柚</span> 开发维护<span class="ad-sep">·</span>JSON 工具箱 V12<span class="ad-sep">·</span>支持格式化 / 树视图 / 对比 / 全文搜索 / 路径补全 / CSV 导出 / 扁平化 / 语法高亮<span class="ad-sep">·</span>
-        <span class="ad-strong">广告位招租</span><span class="ad-sep">·</span>虚位以待<span class="ad-sep">·</span>本工具由 <span class="ad-name">白柚</span> 开发维护<span class="ad-sep">·</span>JSON 工具箱 V12<span class="ad-sep">·</span>支持格式化 / 树视图 / 对比 / 全文搜索 / 路径补全 / CSV 导出 / 扁平化 / 语法高亮<span class="ad-sep">·</span>
-        <span class="ad-strong">广告位招租</span><span class="ad-sep">·</span>虚位以待<span class="ad-sep">·</span>本工具由 <span class="ad-name">白柚</span> 开发维护<span class="ad-sep">·</span>JSON 工具箱 V12<span class="ad-sep">·</span>支持格式化 / 树视图 / 对比 / 全文搜索 / 路径补全 / CSV 导出 / 扁平化 / 语法高亮<span class="ad-sep">·</span>
+        <span class="ad-strong">广告位招租</span><span class="ad-sep">·</span>虚位以待<span class="ad-sep">·</span>本工具由 <span class="ad-name">白柚</span> 开发维护<span class="ad-sep">·</span>JSON 工具箱 V15<span class="ad-sep">·</span>支持格式化 / 树视图 / 对比 / 全文搜索 / 路径补全 / CSV 导出 / 扁平化 / 语法高亮<span class="ad-sep">·</span>
+        <span class="ad-strong">广告位招租</span><span class="ad-sep">·</span>虚位以待<span class="ad-sep">·</span>本工具由 <span class="ad-name">白柚</span> 开发维护<span class="ad-sep">·</span>JSON 工具箱 V15<span class="ad-sep">·</span>支持格式化 / 树视图 / 对比 / 全文搜索 / 路径补全 / CSV 导出 / 扁平化 / 语法高亮<span class="ad-sep">·</span>
+        <span class="ad-strong">广告位招租</span><span class="ad-sep">·</span>虚位以待<span class="ad-sep">·</span>本工具由 <span class="ad-name">白柚</span> 开发维护<span class="ad-sep">·</span>JSON 工具箱 V15<span class="ad-sep">·</span>支持格式化 / 树视图 / 对比 / 全文搜索 / 路径补全 / CSV 导出 / 扁平化 / 语法高亮<span class="ad-sep">·</span>
       </span>
       <span class="ad-group" aria-hidden="true">
-        <span class="ad-strong">广告位招租</span><span class="ad-sep">·</span>虚位以待<span class="ad-sep">·</span>本工具由 <span class="ad-name">白柚</span> 开发维护<span class="ad-sep">·</span>JSON 工具箱 V12<span class="ad-sep">·</span>支持格式化 / 树视图 / 对比 / 全文搜索 / 路径补全 / CSV 导出 / 扁平化 / 语法高亮<span class="ad-sep">·</span>
-        <span class="ad-strong">广告位招租</span><span class="ad-sep">·</span>虚位以待<span class="ad-sep">·</span>本工具由 <span class="ad-name">白柚</span> 开发维护<span class="ad-sep">·</span>JSON 工具箱 V12<span class="ad-sep">·</span>支持格式化 / 树视图 / 对比 / 全文搜索 / 路径补全 / CSV 导出 / 扁平化 / 语法高亮<span class="ad-sep">·</span>
-        <span class="ad-strong">广告位招租</span><span class="ad-sep">·</span>虚位以待<span class="ad-sep">·</span>本工具由 <span class="ad-name">白柚</span> 开发维护<span class="ad-sep">·</span>JSON 工具箱 V12<span class="ad-sep">·</span>支持格式化 / 树视图 / 对比 / 全文搜索 / 路径补全 / CSV 导出 / 扁平化 / 语法高亮<span class="ad-sep">·</span>
+        <span class="ad-strong">广告位招租</span><span class="ad-sep">·</span>虚位以待<span class="ad-sep">·</span>本工具由 <span class="ad-name">白柚</span> 开发维护<span class="ad-sep">·</span>JSON 工具箱 V15<span class="ad-sep">·</span>支持格式化 / 树视图 / 对比 / 全文搜索 / 路径补全 / CSV 导出 / 扁平化 / 语法高亮<span class="ad-sep">·</span>
+        <span class="ad-strong">广告位招租</span><span class="ad-sep">·</span>虚位以待<span class="ad-sep">·</span>本工具由 <span class="ad-name">白柚</span> 开发维护<span class="ad-sep">·</span>JSON 工具箱 V15<span class="ad-sep">·</span>支持格式化 / 树视图 / 对比 / 全文搜索 / 路径补全 / CSV 导出 / 扁平化 / 语法高亮<span class="ad-sep">·</span>
+        <span class="ad-strong">广告位招租</span><span class="ad-sep">·</span>虚位以待<span class="ad-sep">·</span>本工具由 <span class="ad-name">白柚</span> 开发维护<span class="ad-sep">·</span>JSON 工具箱 V15<span class="ad-sep">·</span>支持格式化 / 树视图 / 对比 / 全文搜索 / 路径补全 / CSV 导出 / 扁平化 / 语法高亮<span class="ad-sep">·</span>
       </span>
     </div>
   </div>
@@ -1133,6 +1133,127 @@
         return [...matches.values()];
       }
 
+      function tokenizeFlatPath(text) {
+        const tokens = [];
+        let cursor = text.startsWith('$') ? 1 : 0;
+        if (text[cursor] === '.') cursor += 1;
+        let buffer = '';
+        while (cursor < text.length) {
+          const ch = text[cursor];
+          if (ch === '.') {
+            if (buffer) {
+              tokens.push(buffer);
+              buffer = '';
+            }
+            cursor += 1;
+          } else if (ch === '[') {
+            if (buffer) {
+              tokens.push(buffer);
+              buffer = '';
+            }
+            const close = text.indexOf(']', cursor);
+            if (close === -1) {
+              buffer += text.slice(cursor);
+              cursor = text.length;
+            } else {
+              tokens.push(text.slice(cursor, close + 1));
+              cursor = close + 1;
+            }
+          } else {
+            buffer += ch;
+            cursor += 1;
+          }
+        }
+        if (buffer) tokens.push(buffer);
+        return tokens;
+      }
+
+      function matchFlatTokens(queryTokens, keyTokens) {
+        function walk(qi, ki) {
+          while (qi < queryTokens.length) {
+            const token = queryTokens[qi];
+            if (token === '*' || token === '[*]') {
+              for (let take = keyTokens.length - ki; take >= 0; take -= 1) {
+                if (walk(qi + 1, ki + take)) return true;
+              }
+              return false;
+            }
+            if (ki >= keyTokens.length || keyTokens[ki] !== token) return false;
+            qi += 1;
+            ki += 1;
+          }
+          return ki === keyTokens.length;
+        }
+        return walk(0, 0);
+      }
+
+      function flatKeyFallback(root, queryText) {
+        if (root === null || typeof root !== 'object' || Array.isArray(root)) return [];
+        const queryTokens = tokenizeFlatPath(queryText);
+        if (!queryTokens.length) return [];
+        const matches = [];
+        Object.keys(root).forEach(key => {
+          if (!key.startsWith('$.')) return;
+          if (matchFlatTokens(queryTokens, tokenizeFlatPath(key))) {
+            matches.push({
+              path: `$[${JSON.stringify(key)}]`,
+              display: key,
+              value: root[key]
+            });
+          }
+        });
+        return matches;
+      }
+
+      const DEEP_FALLBACK_LIMIT = 1000;
+
+      function deepWildcardFallback(root, segments) {
+        if (!segments.length) return [];
+        const hasWildcard = segments.some(s => s === '*' || s === '[*]');
+        if (!hasWildcard) return [];
+        const matches = [];
+        const seen = new Set();
+        const visited = new Set();
+        function emit(value, path) {
+          if (matches.length >= DEEP_FALLBACK_LIMIT || seen.has(path)) return;
+          seen.add(path);
+          matches.push({ value, path });
+        }
+        function walk(value, path, index) {
+          if (matches.length >= DEEP_FALLBACK_LIMIT) return;
+          const stateKey = `${index}|${path}`;
+          if (visited.has(stateKey)) return;
+          visited.add(stateKey);
+          const segment = segments[index];
+          if (segment === '*' || segment === '[*]') {
+            walk(value, path, index + 1);
+          }
+          if (index === segments.length) {
+            emit(value, path);
+            return;
+          }
+          const isWildcard = segment === '*' || segment === '[*]';
+          if (Array.isArray(value)) {
+            if (isWildcard) {
+              value.forEach((child, i) => walk(child, `${path}[${i}]`, index));
+            } else if (/^\d+$/.test(segment)) {
+              const i = Number(segment);
+              if (i < value.length) walk(value[i], `${path}[${i}]`, index + 1);
+            } else {
+              value.forEach((child, i) => walk(child, `${path}[${i}]`, index));
+            }
+          } else if (value !== null && typeof value === 'object') {
+            if (isWildcard) {
+              Object.entries(value).forEach(([key, child]) => walk(child, childPath(path, key, false), index));
+            } else if (Object.prototype.hasOwnProperty.call(value, segment)) {
+              walk(value[segment], childPath(path, segment, false), index + 1);
+            }
+          }
+        }
+        walk(root, '$', 0);
+        return matches;
+      }
+
       function searchJson(root, query) {
         const needle = query.toLocaleLowerCase();
         const results = [];
@@ -1592,6 +1713,12 @@
           return;
         }
         currentMatches = findAllMatches(data, segments);
+        if (!currentMatches.length) {
+          currentMatches = flatKeyFallback(data, elements.path.value.trim());
+        }
+        if (!currentMatches.length) {
+          currentMatches = deepWildcardFallback(data, segments);
+        }
         renderResults(currentMatches);
       }
 
@@ -1611,7 +1738,7 @@
           path.type = 'button';
           path.className = 'path path-link';
           path.title = '点击跳转到对应位置';
-          path.textContent = match.path;
+          path.textContent = match.display || match.path;
           path.addEventListener('click', () => locateByPath(currentMatches[index].path));
           const type = document.createElement('span');
           type.className = 'type-tag';
